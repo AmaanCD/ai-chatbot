@@ -1,0 +1,36 @@
+Qdrant API
+
+PUT /collections/{name}: Create a collection for storing vectors.
+{
+  "vectors": {
+    "size": 4096,        // embedding size (adjust to your model)
+    "distance": "Cosine" // or "Dot", "Euclid"
+  }
+}
+POST /collections/{name}/points: Insert new vectors (embeddings) with metadata.
+{
+  "points": [
+    {
+      "id": "doc-1",
+      "vector": [0.1, 0.2, 0.3, ...], // your embedding vector
+      "payload": {
+        "filename": "example.txt",
+        "content": "This is the file content."
+      }
+    }
+  ]
+}
+POST /collections/{name}/points/search: Search for the most similar vectors.
+{
+  "vector": [0.1, 0.2, 0.3, ...], // embedding of your query
+  "limit": 1,
+  "with_payload": true
+}
+POST /collections/{collection_name}/points/delete
+{
+  "points": ["doc-1"]
+}
+Spring Boot API
+
+POST /embedding/upload: Upload a file and store its embedding.
+GET /embedding/search?query=...: Search for the most relevant file/content.
