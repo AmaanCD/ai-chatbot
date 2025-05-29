@@ -1,5 +1,6 @@
 package com.db.vector.controller;
 
+import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,15 @@ public class ChatController {
     @Autowired
     ChatService chatService;
 
+
+    ChatClient chatClient;
+
+    public ChatController(ChatService chatService, ChatClient.Builder chaBuilder) {
+        this.chatService = chatService;
+        this.chatClient = chaBuilder.build();
+
+    }
+
     // Constructor injection of the ChatService
 
     @GetMapping("/ask")
@@ -25,5 +35,12 @@ public class ChatController {
         return this.chatService.chat(query);
 
     }
+
+    @GetMapping("/question")
+    public String ask(@RequestParam("query")String query){
+        return
+                this.chatService.ask(query);
+    }
+
 
 }

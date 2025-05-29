@@ -2,6 +2,8 @@ package com.db.vector.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.document.Document;
@@ -19,8 +21,23 @@ public class ChatServiceImpl implements ChatService {
     @Autowired
     private org.springframework.ai.ollama.OllamaChatModel ollamaChatModel;
 
-    @Autowired
-    private VectorStore vectorStore;
+
+    private final VectorStore vectorStore;
+
+    private final ChatClient chatClient;
+
+    public ChatServiceImpl(ChatClient.Builder chaBuilder,VectorStore vectorStore) {
+        this.vectorStore = vectorStore;
+        this.chatClient = chaBuilder.build().mutate().defaultAdvisors(
+                QuestionAnswerAdvisor.builder(vectorStore).build()
+
+        ).build();
+    }
+
+    public String ask(String query){
+
+        return chatClient.prompt().user(query).call().content();
+    }
 
     @Override
     public String chat(String query) {
